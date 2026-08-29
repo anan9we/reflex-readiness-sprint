@@ -971,17 +971,18 @@ button:focus-visible {
   .history-search button {
     width: 100%;
   }
+  
+  .history-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
 
- .danger-button {
+.danger-button {
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
    margin-bottom: 20px;
-} 
-  .history-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
 }
