@@ -685,6 +685,50 @@ function updateDashboardTime() {
 }
 
 // -----------------------------
+// Clear demo data
+// -----------------------------
+
+const clearDemoDataButton = document.getElementById(
+  "clearDemoDataButton",
+);
+
+if (clearDemoDataButton) {
+  clearDemoDataButton.addEventListener("click", async () => {
+    const confirmed = confirm(
+      "Are you sure you want to clear all demo deliveries and delivery history?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/clear-demo-data", {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Unable to clear demo data.");
+        return;
+      }
+
+      alert("Demo data cleared successfully.");
+
+      previousDeliveries = [];
+
+      await loadDeliveries();
+      await loadHistory();
+    } catch (error) {
+      console.error("Clear demo data error:", error);
+
+      alert("Unable to connect to the server.");
+    }
+  });
+}
+
+// -----------------------------
 // Initial load
 // -----------------------------
 
