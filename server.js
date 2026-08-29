@@ -342,7 +342,6 @@ app.patch("/api/deliveries/:deliveryId/status", (req, res) => {
       db.run(
         `
           UPDATE deliveries
-
           SET
             status = ?,
             updated_at = ?
@@ -365,9 +364,6 @@ app.patch("/api/deliveries/:deliveryId/status", (req, res) => {
               error: "Delivery status changed before this update was applied.",
             });
           }
-
-          // FIXED:
-          // Added order_id to the event insert.
 
           db.run(
             `
