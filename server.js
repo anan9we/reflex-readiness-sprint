@@ -51,6 +51,8 @@ db.serialize(() => {
     )
   `);
 
+  // Add sample riders if they don't exist
+
   const riders = [
     ["R001", "Kevin", "0712345678"],
     ["R002", "Brian", "0723456789"],
@@ -239,67 +241,152 @@ app.post("/api/deliveries", (req, res) => {
   );
 });
 
-// -----------------------------
+// ----------------------------------
 // Assign delivery
-// -----------------------------
+// ----------------------------------
 
-async function assignDelivery(deliveryId) {
-  const selector = document.getElementById(`rider-${deliveryId}`);
-
-  if (!selector) {
-    alert("Rider selector not found.");
-    return;
-  }
-
-  const riderId = selector.value;
+app.post("/api/deliveries/:deliveryId/assign", (req, res) => {
+  const { deliveryId } = req.params;
+  const { riderId } = req.body;
 
   if (!riderId) {
-    alert("Please select a rider.");
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/deliveries/${deliveryId}/assign`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        riderId: riderId,
-      }),
+    return res.status(400).json({
+      error: "Rider ID is required.",
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || "Unable to assign delivery.");
-      return;
-    }
-
-    // Get the latest data from the server
-    const deliveriesResponse = await fetch("/api/deliveries");
-
-    if (!deliveriesResponse.ok) {
-      throw new Error("Unable to refresh deliveries.");
-    }
-
-    const deliveries = await deliveriesResponse.json();
-
-    // Replace both frontend data sets with the latest server data
-    currentDeliveries = deliveries;
-    previousDeliveries = [...deliveries];
-
-    // Re-render everything
-    renderDispatcher(deliveries);
-    renderRider(deliveries);
-    updateDashboardStats(deliveries);
-    renderHistory(deliveries, historySearch?.value || "");
-
-  } catch (error) {
-    console.error("Assign delivery error:", error);
-    alert("Unable to connect to the server.");
   }
-}
+
+  db.get(
+    `SELECT * FROM deliveries WHERE id = ?`,
+    [deliveryId],
+    (error, delivery) => {
+      if (error) {
+        console.error(error);
+
+        return res.status(500).json({
+          error: "Unable to find delivery.",
+        });
+      }
+
+      if (!delivery) {
+        return res.status(404).json({
+          error: "Delivery not found.",
+        });
+      }
+
+      if (delivery.status !== "OPEN") {
+        return res.status(409).json({
+          error: `Cannot assign delivery because its status is ${delivery.status}.`,
+        });
+      }
+
+      db.get(
+        `SELECT * FROM riders WHERE id = ? AND active = 1`,
+        [riderId],
+        (error, rider) => {
+          if (error) {
+            console.error(error);
+
+            return res.status(500).json({
+              error: "Unable to find rider.",
+            });
+          }
+
+          if (!rider) {
+            return res.status(404).json({
+              error: "Rider not found or inactive.",
+            });
+          }
+
+          const now = new Date().toISOString();
+
+          db.run(
+            `
+              UPDATE deliveries
+
+              SET
+                rider_id = ?,
+                status = ?,
+                updated_at = ?
+
+              WHERE id = ?
+                AND status = ?
+            `,
+            [riderId, "ASSIGNED", now, deliveryId, "OPEN"],
+            function (error) {
+              if (error) {
+                console.error(error);
+
+                return res.status(500).json({
+                  error: "Unable to assign delivery.",
+                });
+              }
+
+              if (this.changes === 0) {
+                return res.status(409).json({
+                  error: "Delivery was already updated.",
+                });
+              }
+
+              db.run(
+                `
+                  INSERT INTO delivery_events
+                  (delivery_id, order_id, old_status, new_status, created_at)
+                  VALUES (?, ?, ?, ?, ?)
+                `,
+                [
+                  deliveryId,
+                  delivery.order_id,
+                  delivery.status,
+                  "ASSIGNED",
+                  now,
+                ],
+                (eventError) => {
+                  if (eventError) {
+                    console.error(eventError);
+                  }
+
+                  db.get(
+                    `
+                      SELECT
+                        id,
+                        order_id AS orderId,
+                        customer_name AS customerName,
+                        customer_phone AS customerPhone,
+                        address,
+                        item_description AS itemDescription,
+                        status,
+                        rider_id AS riderId,
+                        created_at AS createdAt,
+                        updated_at AS updatedAt
+                      FROM deliveries
+                      WHERE id = ?
+                    `,
+                    [deliveryId],
+                    (error, updatedDelivery) => {
+                      if (error) {
+                        console.error(error);
+
+                        return res.status(500).json({
+                          error: "Unable to retrieve updated delivery.",
+                        });
+                      }
+
+                      res.json({
+                        message: "Delivery assigned successfully.",
+                        delivery: updatedDelivery,
+                      });
+                    },
+                  );
+                },
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+});
+
 // ----------------------------------
 // Update delivery status
 // ----------------------------------
@@ -340,6 +427,7 @@ app.patch("/api/deliveries/:deliveryId/status", (req, res) => {
       db.run(
         `
           UPDATE deliveries
+
           SET
             status = ?,
             updated_at = ?
@@ -362,6 +450,9 @@ app.patch("/api/deliveries/:deliveryId/status", (req, res) => {
               error: "Delivery status changed before this update was applied.",
             });
           }
+
+          // FIXED:
+          // Added order_id to the event insert.
 
           db.run(
             `
