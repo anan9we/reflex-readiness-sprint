@@ -600,6 +600,38 @@ app.get("/api/history", (req, res) => {
 });
 
 // ----------------------------------
+// Clear demo data
+// ----------------------------------
+
+app.delete("/api/admin/clear-demo-data", (req, res) => {
+  db.serialize(() => {
+    db.run(`DELETE FROM delivery_events`, (error) => {
+      if (error) {
+        console.error(error);
+
+        return res.status(500).json({
+          error: "Unable to clear delivery history.",
+        });
+      }
+
+      db.run(`DELETE FROM deliveries`, (error) => {
+        if (error) {
+          console.error(error);
+
+          return res.status(500).json({
+            error: "Unable to clear deliveries.",
+          });
+        }
+
+        res.json({
+          message: "Demo data cleared successfully.",
+        });
+      });
+    });
+  });
+});
+
+// ----------------------------------
 // Start server
 // ----------------------------------
 
