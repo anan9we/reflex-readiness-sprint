@@ -610,3 +610,29 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log("Database: reflex.db");
 });
+
+app.delete("/api/admin/clear-database", (req, res) => {
+  db.serialize(() => {
+    db.run(`DELETE FROM delivery_events`, (error) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).json({
+          error: "Unable to clear delivery events",
+        });
+      }
+
+      db.run(`DELETE FROM deliveries`, (error) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).json({
+            error: "Unable to clear deliveries",
+          });
+        }
+
+        res.json({
+          message: "Database cleared successfully",
+        });
+      });
+    });
+  });
+});
