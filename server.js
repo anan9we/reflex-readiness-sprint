@@ -51,8 +51,6 @@ db.serialize(() => {
     )
   `);
 
-  // Add sample riders if they don't exist
-
   const riders = [
     ["R001", "Kevin", "0712345678"],
     ["R002", "Brian", "0723456789"],
