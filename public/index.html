@@ -26,9 +26,12 @@
         <p>Delivery Operations</p>
       </div>
 
-      <div class="connection">
-        <span class="connection-dot"></span>
-        <span>System Online</span>
+      <div class="topbar-actions">
+        <button id="changeRoleButton" class="change-role-button hidden">Change Role</button>
+        <div class="connection">
+          <span class="connection-dot"></span>
+          <span>System Online</span>
+        </div>
       </div>
     </header>
 
@@ -94,12 +97,56 @@
       </svg>
     </div>
 
-    <main>
+
+    <!-- ========================= -->
+    <!-- ROLE SELECTION -->
+    <!-- ========================= -->
+    <section id="roleScreen" class="role-screen">
+      <div class="role-screen-inner">
+        <p class="eyebrow">THE READINESS SPRINT</p>
+        <h2>Welcome to Reflex</h2>
+        <p class="role-subtitle">
+          Choose your role to open the right delivery workspace.
+        </p>
+
+        <div class="role-buttons">
+          <button class="role-card retailer-role" data-role="retailer">
+            <span class="role-letter">R</span>
+            <span class="role-card-text">
+              <strong>Retailer</strong>
+              <small>Create deliveries and track their progress</small>
+            </span>
+            <span class="role-arrow">→</span>
+          </button>
+
+          <button class="role-card dispatcher-role" data-role="dispatcher">
+            <span class="role-letter">D</span>
+            <span class="role-card-text">
+              <strong>Dispatcher</strong>
+              <small>Assign riders and monitor operations</small>
+            </span>
+            <span class="role-arrow">→</span>
+          </button>
+
+          <button class="role-card rider-role" data-role="rider">
+            <span class="role-letter">R</span>
+            <span class="role-card-text">
+              <strong>Rider</strong>
+              <small>View assigned deliveries and update status</small>
+            </span>
+            <span class="role-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div id="appShell" class="app-shell hidden">
+    <main id="mainApp">
       <!-- ========================= -->
       <!-- DASHBOARD INTRO -->
       <!-- ========================= -->
 
-      <section class="hero">
+      <section id="heroSection" class="hero">
         <div>
           <p class="eyebrow">DELIVERY OPERATIONS</p>
 
@@ -124,7 +171,7 @@
       <!-- STAT CARDS -->
       <!-- ========================= -->
 
-      <section class="stats-grid">
+      <section id="statsSection" class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">TOTAL DELIVERIES</div>
           <div id="totalDeliveries" class="stat-value">0</div>
@@ -154,7 +201,7 @@
       <!-- RETAILER -->
       <!-- ========================= -->
 
-      <section class="panel">
+      <section id="retailerView" class="panel role-view">
         <div class="panel-header">
           <div class="section-title">
             <div class="section-icon retailer-icon">R</div>
@@ -231,11 +278,27 @@
         </form>
       </section>
 
+      <section id="retailerTracking" class="panel role-view">
+        <div class="panel-header">
+          <div class="section-title">
+            <div class="section-icon retailer-icon">T</div>
+            <div>
+              <h2>My Deliveries</h2>
+              <p>Track submitted delivery requests</p>
+            </div>
+          </div>
+          <span id="retailerDeliveryCount" class="count-badge">0 deliveries</span>
+        </div>
+        <div id="retailerDeliveries">
+          <div class="empty">No delivery requests yet.</div>
+        </div>
+      </section>
+
       <!-- ========================= -->
       <!-- DISPATCHER -->
       <!-- ========================= -->
 
-      <section class="panel">
+      <section id="dispatcherView" class="panel role-view">
         <div class="panel-header">
           <div class="section-title">
             <div class="section-icon dispatcher-icon">D</div>
@@ -258,7 +321,7 @@
       <!-- RIDER -->
       <!-- ========================= -->
 
-      <section class="panel">
+      <section id="riderView" class="panel role-view">
         <div class="panel-header">
           <div class="section-title">
             <div class="section-icon rider-icon">R</div>
@@ -316,6 +379,7 @@
       </div>
     </section>
     </main>
+    </div>
 
     <script src="app.js"></script>
   </body>
