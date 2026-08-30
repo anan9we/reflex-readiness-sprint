@@ -631,18 +631,6 @@ app.delete("/api/admin/clear-demo-data", (req, res) => {
   });
 });
 
-// ----------------------------------
-// Start server
-// ----------------------------------
-
-app.listen(PORT, () => {
-  console.log("=================================");
-  console.log("       REFLEX DELIVERY SYSTEM");
-  console.log("=================================");
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log("Database: reflex.db");
-});
-
 app.delete("/api/admin/clear-database", (req, res) => {
   db.serialize(() => {
     db.run(`DELETE FROM delivery_events`, (error) => {
@@ -668,3 +656,17 @@ app.delete("/api/admin/clear-database", (req, res) => {
     });
   });
 });
+
+// ----------------------------------
+// Start server
+// ----------------------------------
+
+app.listen(PORT, () => {
+  console.log("=================================");
+  console.log("       REFLEX DELIVERY SYSTEM");
+  console.log("=================================");
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log("Database: reflex.db");
+});
+
+
