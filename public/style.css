@@ -986,3 +986,184 @@ button:focus-visible {
   font-weight: 600;
    margin-bottom: 20px;
 }
+
+/* ============================================================
+   ROLE-BASED WORKSPACES
+   ============================================================ */
+
+.hidden {
+  display: none !important;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.change-role-button {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #2A2E3B;
+  border-radius: 999px;
+  background: #181B24;
+  color: #C7CCD9;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.change-role-button:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+  background: #20232C;
+}
+
+/* Landing screen */
+.role-screen {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 24px 70px;
+}
+
+.role-screen-inner {
+  width: min(760px, 100%);
+  text-align: center;
+}
+
+.role-screen-inner h2 {
+  margin: 10px 0 10px;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-size: clamp(32px, 5vw, 46px);
+  letter-spacing: -1.5px;
+}
+
+.role-subtitle {
+  margin: 0 auto 28px;
+  max-width: 560px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.role-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.role-card {
+  width: 100%;
+  min-height: 150px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 13px;
+  padding: 20px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(18, 20, 28, 0.05);
+}
+
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(18, 20, 28, 0.09);
+}
+
+.role-letter {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--paper);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+}
+
+.role-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.role-card-text strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px;
+}
+
+.role-card-text small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.role-arrow {
+  font-size: 20px;
+  color: var(--faint);
+}
+
+.retailer-role {
+  border-top: 3px solid var(--nerve);
+}
+
+.dispatcher-role {
+  border-top: 3px solid var(--relay);
+}
+
+.rider-role {
+  border-top: 3px solid var(--resolved);
+}
+
+.role-view {
+  margin-bottom: 20px;
+}
+
+/* Retailer tracking */
+#retailerTracking {
+  border-left-color: var(--nerve);
+  background: linear-gradient(180deg, var(--nerve-fade) 0%, var(--surface) 170px);
+}
+
+/* Cleaner role-specific hero */
+#heroSection {
+  margin-bottom: 26px;
+}
+
+@media (max-width: 850px) {
+  .role-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .role-screen {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .change-role-button {
+    padding: 7px 10px;
+  }
+
+  .connection span:last-child {
+    display: none;
+  }
+
+  .role-screen {
+    padding: 34px 15px 50px;
+  }
+
+  .role-card {
+    min-height: 120px;
+  }
+}
