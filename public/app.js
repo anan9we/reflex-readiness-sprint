@@ -758,31 +758,57 @@ function updateDashboardTime() {
 if (clearDemoDataButton) {
   clearDemoDataButton.addEventListener("click", async () => {
     const confirmed = confirm(
-      "Are you sure you want to clear all demo deliveries and delivery history?",
+      "Are you sure you want to clear all demo deliveries and delivery history?"
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       const response = await fetch("/api/admin/clear-demo-data", {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = {
+          error: responseText || "Server returned an invalid response.",
+        };
+      }
+
+      console.log("Clear demo data response:", {
+        status: response.status,
+        ok: response.ok,
+        data,
+      });
 
       if (!response.ok) {
-        alert(data.error || "Unable to clear demo data.");
+        alert(
+          data.error ||
+            `Unable to clear demo data. Server returned ${response.status}.`
+        );
         return;
       }
 
       alert("Demo data cleared successfully.");
 
-      previousDeliveries = [];
+      previousDeliveries = null;
+
       await loadDeliveries();
       await loadHistory();
+      
     } catch (error) {
       console.error("Clear demo data error:", error);
-      alert("Unable to connect to the server.");
+      alert(`Unable to connect to the server: ${error.message}`);
     }
   });
 }
