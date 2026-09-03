@@ -116,138 +116,168 @@ body {
   40% { box-shadow: 0 0 0 5px rgba(15, 169, 104, 0); }
 }
 
-/* ---- motion strip: rider passing buildings ---- */
+/* ---- flow strip: how a delivery moves through Reflex ---- */
 
-.motion-strip {
-  position: relative;
-  height: 60px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #E9F0FF 0%, var(--paper) 80%);
+.flow-strip {
+  background: var(--surface);
   border-bottom: 1px solid var(--line);
+  padding: 22px 24px 26px;
+  position: relative;
+  z-index: 2;
 }
 
-.skyline {
-  position: absolute;
-  left: 0; right: 0;
-  bottom: 14px;
-  top: 0;
+.flow-title {
+  margin: 0 0 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.flow-track {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 76px;
+  animation: cardEnter 0.5s var(--ease-out) both;
+}
+
+.flow-step:nth-child(1) { animation-delay: 0ms; }
+.flow-step:nth-child(3) { animation-delay: 70ms; }
+.flow-step:nth-child(5) { animation-delay: 140ms; }
+.flow-step:nth-child(7) { animation-delay: 210ms; }
+.flow-step:nth-child(9) { animation-delay: 280ms; }
+
+.flow-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 22px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  transition: transform 0.2s var(--ease-snap);
+}
+
+.flow-step:hover .flow-icon {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.flow-icon--retailer { background: var(--nerve-soft); border-color: var(--nerve); }
+.flow-icon--created { background: var(--signal-soft); border-color: var(--signal); }
+.flow-icon--dispatcher { background: var(--relay-soft); border-color: var(--relay); }
+.flow-icon--rider { background: var(--resolved-soft); border-color: var(--resolved); }
+.flow-icon--customer { background: var(--paper); border-color: var(--faint); }
+
+.flow-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.flow-arrow {
+  color: var(--faint);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 2px;
+}
+
+.flow-connector {
+  flex: 1 1 40px;
+  min-width: 34px;
+  max-width: 90px;
+  height: 4px;
+  align-self: center;
+  background: var(--line);
+  border-radius: 999px;
+  position: relative;
   overflow: hidden;
 }
 
-.skyline-track {
-  display: flex;
-  align-items: flex-end;
-  gap: 14px;
+.flow-connector-fill {
+  position: absolute;
+  top: 0; left: 0;
+  width: 32%;
   height: 100%;
-  width: max-content;
-  padding-left: 6px;
-  animation: scrollSlow 20s linear infinite;
+  border-radius: 999px;
+  animation-name: connectorFlowX;
+  animation-duration: 3.2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-.bldg {
-  display: block;
-  width: 20px;
-  flex: 0 0 auto;
-  background: #20232C;
-  opacity: 0.22;
-  border-radius: 1px 1px 0 0;
+.flow-connector-fill--signal { background: var(--signal); animation-delay: 0s; }
+.flow-connector-fill--relay { background: var(--relay); animation-delay: 0.8s; }
+.flow-connector-fill--resolved { background: var(--resolved); animation-delay: 1.6s; }
+.flow-connector-fill--faint { background: var(--faint); animation-delay: 2.4s; }
+
+/* Each fill only sweeps during its own quarter of the shared 3.2s cycle,
+   then sits hidden until its turn comes back around — so the pulse
+   relays Retailer → Customer in sequence rather than all at once. */
+@keyframes connectorFlowX {
+  0%     { transform: translateX(-110%); opacity: 1; }
+  20%    { transform: translateX(410%); opacity: 1; }
+  21%    { transform: translateX(410%); opacity: 0; }
+  100%   { transform: translateX(410%); opacity: 0; }
 }
 
-@keyframes scrollSlow {
-  from { transform: translateX(0); }
-  to { transform: translateX(-340px); }
+@keyframes connectorFlowY {
+  0%     { transform: translateY(-110%); opacity: 1; }
+  20%    { transform: translateY(410%); opacity: 1; }
+  21%    { transform: translateY(410%); opacity: 0; }
+  100%   { transform: translateY(410%); opacity: 0; }
 }
 
-.road {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 14px;
-  background: #20232C;
-}
+@media (max-width: 700px) {
+  .flow-track {
+    flex-direction: column;
+    gap: 14px;
+  }
 
-.road::after {
-  content: "";
-  position: absolute;
-  top: 50%; left: 0; right: 0;
-  height: 2px;
-  transform: translateY(-50%);
-  background-image: repeating-linear-gradient(90deg, var(--paper) 0 12px, transparent 12px 24px);
-  animation: scrollFast 1s linear infinite;
-}
+  .flow-connector {
+    width: 4px;
+    height: 30px;
+    max-width: none;
+    flex: 0 0 auto;
+  }
 
-@keyframes scrollFast {
-  from { background-position-x: 0; }
-  to { background-position-x: -24px; }
-}
-
-.rider {
-  position: absolute;
-  left: 64px;
-  bottom: 10px;
-  width: 60px;
-  height: 44px;
-  z-index: 2;
-  animation: riderBob 0.45s ease-in-out infinite alternate;
-}
-
-@keyframes riderBob {
-  from { transform: translateY(0) rotate(0deg); }
-  to { transform: translateY(-2px) rotate(-1.5deg); }
-}
-
-.wheel-spin {
-  transform-box: fill-box;
-  animation: wheelSpin 0.35s linear infinite;
-}
-
-@keyframes wheelSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.speed-lines {
-  position: absolute;
-  left: 34px;
-  bottom: 22px;
-  width: 26px;
-  height: 20px;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.speed-line {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: #20232C;
-  border-radius: 2px;
-  opacity: 0;
-  animation: speedDash 0.45s linear infinite;
-}
-
-.speed-line:nth-child(1) { top: 2px; animation-delay: 0s; }
-.speed-line:nth-child(2) { top: 9px; animation-delay: 0.12s; }
-.speed-line:nth-child(3) { top: 16px; animation-delay: 0.22s; }
-
-@keyframes speedDash {
-  0% { opacity: 0; transform: translateX(14px) scaleX(0.4); }
-  25% { opacity: 0.5; }
-  70% { opacity: 0.35; transform: translateX(-6px) scaleX(1); }
-  100% { opacity: 0; transform: translateX(-14px) scaleX(0.4); }
+  .flow-connector-fill {
+    width: 100%;
+    height: 32%;
+    animation-name: connectorFlowY;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skyline-track,
-  .road::after,
-  .rider,
-  .wheel-spin,
-  .speed-line,
+  .flow-step,
+  .flow-connector-fill,
   .connection-dot,
   .delivery-card,
   .history-card,
   .stat-card {
     animation: none !important;
+  }
+
+  .flow-connector-fill {
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
   }
 }
 
