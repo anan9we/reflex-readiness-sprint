@@ -217,15 +217,15 @@ body {
   height: 100%;
   border-radius: 999px;
   animation-name: connectorFlowX;
-  animation-duration: 3.2s;
+  animation-duration: 6.4s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
 .flow-connector-fill--signal { background: var(--signal); animation-delay: 0s; }
-.flow-connector-fill--relay { background: var(--relay); animation-delay: 0.8s; }
-.flow-connector-fill--resolved { background: var(--resolved); animation-delay: 1.6s; }
-.flow-connector-fill--faint { background: var(--faint); animation-delay: 2.4s; }
+.flow-connector-fill--relay { background: var(--relay); animation-delay: 1.6s; }
+.flow-connector-fill--resolved { background: var(--resolved); animation-delay: 3.2s; }
+.flow-connector-fill--faint { background: var(--faint); animation-delay: 4.8s; }
 
 /* Each fill only sweeps during its own quarter of the shared 3.2s cycle,
    then sits hidden until its turn comes back around — so the pulse
