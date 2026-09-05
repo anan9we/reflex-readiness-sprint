@@ -220,6 +220,7 @@ body {
   animation-duration: 6.4s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
 }
 
 .flow-connector-fill--signal { background: var(--signal); animation-delay: 0s; }
@@ -237,30 +238,39 @@ body {
   100%   { transform: translateX(410%); opacity: 0; }
 }
 
-@keyframes connectorFlowY {
-  0%     { transform: translateY(-110%); opacity: 1; }
-  20%    { transform: translateY(410%); opacity: 1; }
-  21%    { transform: translateY(410%); opacity: 0; }
-  100%   { transform: translateY(410%); opacity: 0; }
-}
-
 @media (max-width: 700px) {
+  .flow-strip {
+    padding: 18px 14px 20px;
+  }
+
   .flow-track {
-    flex-direction: column;
-    gap: 14px;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .flow-step {
+    min-width: 0;
+    gap: 5px;
+    flex: 1 1 0;
+  }
+
+  .flow-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    border-width: 1.5px;
+  }
+
+  .flow-label {
+    font-size: 9px;
+    white-space: normal;
+    line-height: 1.15;
   }
 
   .flow-connector {
-    width: 4px;
-    height: 30px;
-    max-width: none;
-    flex: 0 0 auto;
-  }
-
-  .flow-connector-fill {
-    width: 100%;
-    height: 32%;
-    animation-name: connectorFlowY;
+    min-width: 10px;
+    max-width: 30px;
+    flex: 1 1 14px;
   }
 }
 
