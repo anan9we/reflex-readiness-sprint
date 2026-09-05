@@ -223,6 +223,7 @@ function renderRetailer(deliveries) {
       ASSIGNED: `Assigned to ${rider}`,
       PICKED_UP: `${rider} has picked up the delivery`,
       DELIVERED: "Delivery completed",
+      CANCELLED: "Order cancelled",
     };
 
     card.innerHTML = `
@@ -231,9 +232,23 @@ function renderRetailer(deliveries) {
           ${escapeHtml(delivery.orderId)} —
           ${escapeHtml(delivery.customerName)}
         </h3>
-        <span class="status ${delivery.status}">
-          ${delivery.status.replace("_", " ")}
-        </span>
+        <div class="header-actions">
+          <span class="status ${delivery.status}">
+            ${delivery.status.replace("_", " ")}
+          </span>
+          ${
+            delivery.status === "OPEN"
+              ? `
+                <button
+                  class="cancel-btn"
+                  onclick="cancelDelivery('${delivery.id}')"
+                  title="Cancel this order"
+                  aria-label="Cancel this order"
+                >×</button>
+              `
+              : ""
+          }
+        </div>
       </div>
 
       <div class="delivery-info">
@@ -260,6 +275,41 @@ function renderRetailer(deliveries) {
 
     retailerDeliveries.appendChild(card);
   });
+}
+
+// -----------------------------
+// Cancel delivery (retailer, before dispatch)
+// -----------------------------
+
+async function cancelDelivery(deliveryId) {
+  const confirmed = confirm(
+    "Cancel this order? This can't be undone.",
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`/api/deliveries/${deliveryId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "CANCELLED" }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Unable to cancel this order.");
+      return;
+    }
+
+    await loadDeliveries();
+    await loadHistory();
+  } catch (error) {
+    console.error("Cancel delivery error:", error);
+    alert("Unable to connect to the server.");
+  }
 }
 
 // -----------------------------
