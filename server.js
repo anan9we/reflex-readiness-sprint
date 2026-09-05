@@ -77,10 +77,11 @@ db.serialize(() => {
 // ----------------------------------
 
 const allowedTransitions = {
-  OPEN: ["ASSIGNED"],
+  OPEN: ["ASSIGNED", "CANCELLED"],
   ASSIGNED: ["PICKED_UP"],
   PICKED_UP: ["DELIVERED"],
   DELIVERED: [],
+  CANCELLED: [],
 };
 
 // ----------------------------------
@@ -668,5 +669,3 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log("Database: reflex.db");
 });
-
-
